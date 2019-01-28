@@ -1,0 +1,27 @@
+version: '3'
+services:
+   ##
+   mongo:
+      image: mongo:latest
+      container_name: mongo
+      ports:
+         - 20000:27017
+      environment:
+         MONGO_INITDB_ROOT_USERNAME: mongoadmin
+         MONGO_INITDB_ROOT_PASSWORD: secret
+      volumes:
+         - ${PWD}/data/db:/data/db
+   ##
+   api:
+      container_name: node-service
+      build:
+         context: .
+         dockerfile: dev.dockerfile
+      depends_on:
+         - mongo
+      ports:
+         - 3000:3000
+      volumes:
+         - ${PWD}/src:/usr/src/app/src
+         - ${PWD}/package.json:/usr/src/app/package.json
+         - ${PWD}/yarn.lock:/usr/src/app/yarn.lock

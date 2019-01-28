@@ -1,6 +1,5 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import uuid from 'uuid';
 import mongoose from 'mongoose';
 
 import {
@@ -45,14 +44,19 @@ app.listen(process.env.port | 3000, () => {
    console.log(`Server start at port ${process.env.port | 3000}`);
 });
 
-mongoose.connect(
-   'mongodb://localhost:27000/NodeDemo',
-   error => {
-      if (error) {
-         console.log(`Connect mongo error: ${error}`);
-         process.exit(-1);
-      } else {
-         console.log('Connect mongo success');
+const connectMongo = () => {
+   return mongoose.connect(
+      'mongodb://mongoadmin:secret@mongo:27017/admin',
+      { useNewUrlParser: true },
+      error => {
+         if (error) {
+            console.log(`Connect mongo error: ${error}`);
+            setTimeout(connectMongo, 5000);
+         } else {
+            console.log('Connect mongo success');
+         }
       }
-   }
-);
+   );
+};
+
+connectMongo();
