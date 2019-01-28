@@ -1,9 +1,9 @@
 version: '3'
 services:
-   ##
+   ## MongoDB
    mongo:
       image: mongo:latest
-      container_name: mongo
+      container_name: mongoOfNodeDemo
       ports:
          - 20000:27017
       environment:
@@ -11,14 +11,23 @@ services:
          MONGO_INITDB_ROOT_PASSWORD: secret
       volumes:
          - ${PWD}/data/db:/data/db
-   ##
+   # Redis
+   redis:
+      image: redis:latest
+      container_name: redisOfNodeDemo
+      ports:
+         - 5000:6379
+      volumes:
+         - ${PWD}/data/redis:/data/db/redis
+   ## API
    api:
-      container_name: node-service
+      container_name: apiOfNodeDemo
       build:
          context: .
          dockerfile: dev.dockerfile
       depends_on:
          - mongo
+         - redis
       ports:
          - 3000:3000
       volumes:
