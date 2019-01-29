@@ -1,6 +1,8 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
+import mysql from 'mysql';
+import OperationMySQL from './mysql/OperationMySQL';
 
 import {
    createPost,
@@ -40,6 +42,18 @@ app.delete('/posts/:id', (req, res) => {
    deletePost(req, res);
 });
 
+app.post('/users/create', (req, res) => {
+   OperationMySQL.createUser(req, res);
+});
+
+app.get('/users/:id', (req, res) => {
+   OperationMySQL.fetchUser(req, res);
+});
+
+app.get('/users', (req, res) => {
+   OperationMySQL.fetchAllUsers(req, res);
+});
+
 app.listen(process.env.port | 3000, () => {
    console.log(`Server start at port ${process.env.port | 3000}`);
 });
@@ -50,7 +64,7 @@ const connectMongo = () => {
       { useNewUrlParser: true },
       error => {
          if (error) {
-            console.log(`Connect mongo error: ${error}`);
+            // console.log(`Connecting mongo: ${error}`);
             setTimeout(connectMongo, 5000);
          } else {
             console.log('Connect mongo success');
@@ -60,3 +74,26 @@ const connectMongo = () => {
 };
 
 connectMongo();
+
+export const connectionMySQLPool = mysql.createPool({
+   connectionLimit: 10,
+   host: 'mysql',
+   port: 3306,
+   user: 'root',
+   password: 'password',
+   database: 'Posts'
+});
+
+const checkConnectionOfMySQL = () => {
+   connectionMySQLPool.getConnection((error, connection) => {
+      if (error) {
+         // console.log(`Connecting mysql: ${error}`);
+         setTimeout(checkConnectionOfMySQL, 5000);
+      } else {
+         OperationMySQL.initSchema(connection);
+         console.log(`Connect mysql success on thread: ${connection.threadId}`);
+      }
+   });
+};
+
+checkConnectionOfMySQL();
