@@ -2,8 +2,8 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import mysql from 'mysql';
-import OperationMySQL from './mysql/OperationMySQL';
 
+import OperationMySQL from './mysql/OperationMySQL';
 import {
    createPost,
    updatePost,
@@ -11,6 +11,14 @@ import {
    fetchAllPosts,
    deletePost
 } from './mongo/OperationMongo';
+
+require('dotenv').config();
+
+console.log('--------------------------');
+console.log(`process.env.NODE_ENV: ${process.env.NODE_ENV}`);
+console.log(`process.env.PORT: ${process.env.PORT}`);
+console.log(`process.env.FIG: ${process.env.FIG}`);
+console.log('--------------------------');
 
 var app = new express();
 
@@ -54,8 +62,8 @@ app.get('/users', (req, res) => {
    OperationMySQL.fetchAllUsers(req, res);
 });
 
-app.listen(process.env.port | 3000, () => {
-   console.log(`Server start at port ${process.env.port | 3000}`);
+app.listen(process.env.PORT || 3000, () => {
+   console.log(`Server start at port ${process.env.PORT || 3000}`);
 });
 
 const connectMongo = () => {

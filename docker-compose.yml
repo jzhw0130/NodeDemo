@@ -48,7 +48,11 @@ services:
          - mysql
       ports:
          - 3000:3000
+         - 8000:8000
+         - 9000:9000
       volumes:
          - ${PWD}/src:/usr/src/app/src
+         - ${PWD}/.env:/usr/src/app/.env
+         - ${PWD}/.babelrc:/usr/src/app/.babelrc
          - ${PWD}/package.json:/usr/src/app/package.json
          - ${PWD}/yarn.lock:/usr/src/app/yarn.lock
